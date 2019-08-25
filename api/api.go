@@ -13,6 +13,7 @@ import (
 )
 
 func (app App) Ping(w http.ResponseWriter, r *http.Request) {
+	print("got here")
 	response := models.ResponseModel{
 		Ok:      true,
 		Code:    http.StatusOK,

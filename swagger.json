@@ -1,48 +1,16 @@
 {  
    "swagger":"2.0",
    "info":{  
-      "description":"This is a customer insight API, with 2 endpoints. ping and custspend",
+      "description":"A golang web application, accepts an csv file, processes it and sends back a result as json",
       "version":"1.0.0",
-      "title":"Customer Insight"
+      "title":"Billable Rates"
    },
-   "host":"pass.sterling.ng",
-   "basePath":"/customerInsight/api/v1",
+   "host":"localhost:8100",
+   "basePath":"/api",
    "schemes":[  
-      "https"
+      "http"
    ],
    "paths":{  
-      "/custspend":{  
-         "post":{  
-            "summary":"Get customer spending details",
-            "description":"This returns the amount spent by the account holder on the spend item provided over a given period of time",
-            "operationId":"GetCustSpendItem",
-            "consumes":[  
-               "application/json"
-            ],
-            "produces":[  
-               "application/json"
-            ],
-            "parameters":[  
-               {  
-                  "in":"body",
-                  "name":"body",
-                  "description":"Customer's spend item and account",
-                  "required":true,
-                  "schema":{  
-                     "$ref":"#/definitions/SpendDetail"
-                  }
-               }
-            ],
-            "responses":{  
-               "200":{  
-                  "description":"successful operation",
-                  "schema":{  
-                     "$ref":"#/definitions/SpendDetailResponse"
-                  }
-               }
-            }
-         }
-      },
       "/ping":{  
          "get":{  
             "summary":"Check connectivity",
@@ -54,8 +22,40 @@
             "responses":{  
                "200":{  
                   "description":"Ping successful!",
+                  "$ref":"#/definitions/pingResponse"
+               }
+            }
+         }
+      },
+      "/invoice":{  
+         "post":{  
+            "summary":"Returns companies billable invoice",
+            "description":"This returns an array of employee invoice",
+            "operationId":"GenerateInvoice",
+            "consumes":[  
+               "multipart/form-data"
+            ],
+            "content" : "multipart/form-data",
+            "produces":[  
+               "application/json",
+               "multipart/form-data"
+            ],
+            "parameters":[  
+               {  
+                  "in":"body",
+                  "name":"body",
+                  "description":"Employees billable rate in csv",
+                  "required":true,
                   "schema":{  
-                     "type":"string"
+                     "$ref":"#/definitions/billableReport"
+                  }
+               }
+            ],
+            "responses":{  
+               "200":{  
+                  "description":"successful operation",
+                  "schema":{  
+                     "$ref":"#/definitions/billableInvoice"
                   }
                }
             }
@@ -63,29 +63,39 @@
       }
    },
    "definitions":{  
-      "SpendDetail":{  
+      "billableReport":{  
          "type":"object",
          "required":[  
-            "spenditem",
-            "nuban"
+            "csvReport"
          ],
          "properties":{ 
-            "spenditem":{  
+            "csvReport":{  
                "type":"string",
-               "example":"Uber"
-            },
-            "nuban":{  
-               "type":"string",
-               "example":"0011223344"
+               "format": "byte" ,
+               "example":"file"
             }
          }
       },
-      "SpendDetailResponse":{  
+      "billableInvoice":{  
          "type":"object",
          "properties":{  
-            "msg":{  
-               "type":"string"
-            }
+            "ok" : {"type":"boolean"},
+            "code" : {"type" : "integer"},
+            "message" : {"type" : "string"},
+            "data" : {"type":"array", "items": {"type": "object", "properties":{
+               "employeeId" : {"type" : "integer"},
+               "workHours" : {"type" : "integer"},
+               "unitPrice" : {"type" : "integer"},
+               "cost" : {"type" : "integer"}
+            }} }
+         }
+      },
+      "pingResponse" : {
+         "type":"object",
+         "properties":{  
+            "ok" : {"type":"boolean"},
+            "code" : {"type" : "integer"},
+            "message" : {"type" : "string"}
          }
       }
    }
