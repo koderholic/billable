@@ -52,7 +52,7 @@ func startUp() *App {
 	return app
 }
 
-func TestRegisterRoutesWorksCorrectly(t *testing.T) {
+func TestRegisterRoutes(t *testing.T) {
 
 	pingRequest, _ := http.NewRequest("GET", test.pingEndpoint, bytes.NewBuffer([]byte("")))
 	invoiceRequest, _ := http.NewRequest("POST", test.invoiceEndpoint, bytes.NewBuffer([]byte("")))
@@ -69,7 +69,7 @@ func TestRegisterRoutesWorksCorrectly(t *testing.T) {
 
 }
 
-func TestPingReturnsStatusOk(t *testing.T) {
+func TestPingEndpoint(t *testing.T) {
 
 	request, _ := http.NewRequest("GET", test.pingEndpoint, bytes.NewBuffer([]byte("")))
 
@@ -77,7 +77,7 @@ func TestPingReturnsStatusOk(t *testing.T) {
 	checkResponseCode(t, http.StatusOK, response.Code)
 }
 
-func TestGenerateInvoiceReturnsErrorMsgForEmptyInput(t *testing.T) {
+func TestGenerateInvoiceForNoInput(t *testing.T) {
 	err, response := SendEmptyRequestBody()
 	if err != nil {
 		t.Errorf("Test terminated. Reason >> %s\n", err)
@@ -93,7 +93,7 @@ func TestGenerateInvoiceReturnsErrorMsgForEmptyInput(t *testing.T) {
 	}
 }
 
-func TestGenerateInvoiceReturnsErrorMsgForNonCSVFiles(t *testing.T) {
+func TestGenerateInvoiceForNonCSVFiles(t *testing.T) {
 
 	err, response := SendRequestBody(test.nonCsvFile)
 	if err != nil {
@@ -109,7 +109,7 @@ func TestGenerateInvoiceReturnsErrorMsgForNonCSVFiles(t *testing.T) {
 		t.Errorf("Expected response body Message field to not be empty. Got %s\n", responseBody.Message)
 	}
 }
-func TestGenerateInvoiceReturnsNoValueForInValidCSVInput(t *testing.T) {
+func TestGenerateInvoiceForInValidCSVInput(t *testing.T) {
 
 	err, response := SendRequestBody(test.invalidCsv)
 	if err != nil {
@@ -131,7 +131,7 @@ func TestGenerateInvoiceReturnsNoValueForInValidCSVInput(t *testing.T) {
 
 }
 
-func TestGenerateInvoiceReturnsStatusOkForValidInput(t *testing.T) {
+func TestGenerateInvoiceForValidInput(t *testing.T) {
 
 	err, response := SendRequestBody(test.validCsv)
 	if err != nil {
@@ -141,7 +141,7 @@ func TestGenerateInvoiceReturnsStatusOkForValidInput(t *testing.T) {
 	checkResponseCode(t, http.StatusOK, response.Code)
 }
 
-func TestGenerateInvoiceReturnsValueForValidCSVInput(t *testing.T) {
+func TestGenerateInvoiceForValidCSVInput(t *testing.T) {
 
 	err, response := SendRequestBody(test.validCsv)
 	if err != nil {
