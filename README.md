@@ -1,8 +1,6 @@
 # billable
 A golang web application, accepts an csv file, processes it and sends back a result as json
 
-A web application that accepts a timesheet (in csv format) as input and automatically generates invoices for each company in the following format.
-
 How To : 
 1. Ensure you have Golang installed and your GOPATH / GOROOT are set correctly on your computer (see https://golang.org/doc/install for installations)
 2. clone repository
