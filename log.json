@@ -1,0 +1,27 @@
+{
+    "console": {
+        "enable": true, 
+        "level": "FINE"
+    },
+    "files": [
+        {
+            "enable": true,
+            "level": "DEBUG",
+            "filename": "logs.log",
+            "category": "custinsight", 
+            "pattern": "[%D %T] [%C] [%L] (%S) %M"
+        },
+        {
+            "enable": false,
+            "level": "DEBUG",
+            "filename": "logs.log",
+            "category": "custinsight",
+            "pattern": "[%D %T] [%C] [%L] (%S) %M",
+            "rotate": true,
+            "maxsize": "2m",
+            "maxlines": "10K",
+            "daily": true,
+            "sanitize": true
+        }
+    ]
+}
