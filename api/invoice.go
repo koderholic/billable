@@ -4,20 +4,18 @@ import (
 	"billable/models"
 	"billable/utils"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
 
 	log "github.com/jeanphorn/log4go"
 )
 
-
 func (app App) Ping(w http.ResponseWriter, r *http.Request) {
 	response := models.ResponseModel{
 		Ok:      true,
-		Code : http.StatusOK,
+		Code:    http.StatusOK,
 		Message: "pong",
 	}
 	utils.SendResponse(w, http.StatusOK, response)
@@ -38,7 +36,7 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 			response.Ok = false
 			response.Code = http.StatusBadRequest
 			response.Message = "Error Retrieving File, input file required"
-			
+
 			log.Close()
 			utils.SendResponse(w, http.StatusBadRequest, response)
 			return
@@ -55,19 +53,9 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 			return
 		}
 
-		fileContent, err := ioutil.ReadAll(file)
+		err, csvContent := utils.ReadCSV(file)
 		if err != nil {
-			log.Error("could not read content of the request file. Reason >> ", err)
-			response.Ok = false
-			response.Code = http.StatusInternalServerError
-			response.Message = "Error Retrieving File"
-			utils.SendResponse(w, http.StatusInternalServerError, response)
-			return
-		}
-
-		err, csvContent := utils.ReadCSV(string(fileContent))
-		if err != nil {
-			log.Error("could not read content of csv file. Reason >> ", err)
+			log.Error("could not read content of csv file. Reason >> %s", err)
 			response.Ok = false
 			response.Code = http.StatusBadRequest
 			response.Message = "Error retrieving file content, ensure csv file contains proper formating and data properly structured."
@@ -77,17 +65,17 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 
 		employeeInvoice := []models.Employee{}
 
-		for _,employee := range csvContent[1:] {
+		for _, employee := range csvContent[1:] {
 			invoice := models.Employee{}
-			startT, _ := time.Parse("2006-01-02T15:04", fmt.Sprintf("%sT%s", employee[3],employee[4]))
+			startT, _ := time.Parse("2006-01-02T15:04", fmt.Sprintf("%sT%s", employee[3], employee[4]))
 			endT, _ := time.Parse("2006-01-02T15:04", fmt.Sprintf("%sT%s", employee[3], employee[5]))
-			workingHours := utils.GetDifferenceInSeconds(endT.Format("Mon, 02 Jan 2006 15:04:05 WAT"),startT.Format("Mon, 02 Jan 2006 15:04:05 WAT"))
+			workingHours := utils.GetDifferenceInSeconds(endT.Format("Mon, 02 Jan 2006 15:04:05 WAT"), startT.Format("Mon, 02 Jan 2006 15:04:05 WAT"))
 			workingPrice, errPrice := strconv.Atoi(employee[1])
-			if errPrice !=nil  {
+			if errPrice != nil {
 				print(errPrice.Error())
 			}
 			EmployeeId, errEmployee := strconv.Atoi(employee[0])
-			if errEmployee !=nil  {
+			if errEmployee != nil {
 				print(errEmployee.Error())
 			}
 
@@ -100,7 +88,7 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 
 		}
 
-		response.Ok = true 
+		response.Ok = true
 		response.Code = http.StatusOK
 		response.Message = "Employee invoice created successfully"
 		response.Data = employeeInvoice

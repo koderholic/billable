@@ -13,11 +13,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-
 var (
 	app = &api.App{}
 )
-
 
 func main() {
 
@@ -42,7 +40,7 @@ func main() {
 
 	serviceAddress := ":8100"
 
-	if port, ok := os.LookupEnv("ASPNETCORE_PORT"); ok {
+	if port, ok := os.LookupEnv("BILLABLEAPI_PORT"); ok {
 		serviceAddress = ":" + port
 	}
 

@@ -10,7 +10,7 @@ import (
 )
 
 type Data struct {
-	LogPath   string `yaml:"logPath"`
+	LogPath string `yaml:"logPath"`
 }
 
 // var config Data
@@ -22,25 +22,28 @@ func (c *Data) Init(configDir string) {
 		log.Printf("Cannot set default input/output directory to the current working directory >> %s", dirErr)
 	}
 
+	if configDir != "" {
+		println("configDir >> ", configDir)
+		viper.AddConfigPath(configDir)
+	} else {
+		viper.AddConfigPath("../")
+		viper.AddConfigPath(dir)
+	}
+
 	viper.SetConfigName("config")
-	viper.AddConfigPath("../")
-	viper.AddConfigPath(dir)
-	viper.AddConfigPath(configDir)
-	viper.SetDefault("inDir", dir)
-	viper.SetDefault("logPath", "log.json")
+	// viper.SetDefault("logPath", "log.json")
 	viper.WatchConfig()
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		// log.Write(fmt.Sprintf("\n\nfatal error: could not read from config file >>%s \n", err))
-		panic(fmt.Errorf("\n fatal error: could not read from config file >>%s ", err))
+		log.Printf("\n fatal error: could not read from config file >> %s ", err)
 	}
 
 	viper.OnConfigChange(func(e fsnotify.Event) {
 		fmt.Println("Config file changed:", e.Name)
 		err := viper.ReadInConfig()
 		if err != nil {
-			log.Printf("\n fatal error: could not read from config file >>%s ", err)
+			log.Printf("\n fatal error: could not read from config file >> %s ", err)
 		}
 		viper.Unmarshal(c)
 	})
