@@ -31,7 +31,7 @@ func main() {
 	}
 
 	Config := config.Data{}
-	Config.Init(configDir)
+	_ = Config.Init(configDir)
 	logPath := Config.LogPath
 
 	app.Router = mux.NewRouter()
