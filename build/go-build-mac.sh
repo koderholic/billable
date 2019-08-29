@@ -1,2 +1,2 @@
 #!/bin/bash
-go build  -o build/billable.app -ldflags "-s -w"
+go build  -o billable.app -ldflags "-s -w"

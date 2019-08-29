@@ -9,6 +9,7 @@ import (
 
 type Data struct {
 	LogPath string `yaml:"logPath"`
+	Port string `yaml:"port"`
 }
 
 // var config Data

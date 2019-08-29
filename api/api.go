@@ -22,9 +22,11 @@ func (app App) Ping(w http.ResponseWriter, r *http.Request) {
 	utils.SendResponse(w, http.StatusOK, response)
 }
 
+
 //GenerateInvoice gets request sent returns response gotten
 func (app App) GenerateInvoice() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Printf("req >> %+v", r)
 		log.LoadConfiguration(app.LogPath)
 
 		// point to our verify finger print model
@@ -39,7 +41,7 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 			response.Message = "Error Retrieving File, input file required"
 
 			log.Close()
-			utils.SendResponse(w, http.StatusBadRequest, response)
+			utils.SendResponse(w, http.StatusOK, response)
 			return
 		}
 		defer file.Close()
@@ -50,7 +52,7 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 			response.Ok = false
 			response.Code = http.StatusBadRequest
 			response.Message = "Only 'csv' files are allowed"
-			utils.SendResponse(w, http.StatusBadRequest, response)
+			utils.SendResponse(w, http.StatusOK, response)
 			return
 		}
 
@@ -60,7 +62,7 @@ func (app App) GenerateInvoice() http.HandlerFunc {
 			response.Ok = false
 			response.Code = http.StatusBadRequest
 			response.Message = "Error retrieving file content, ensure csv file contains proper formating and data properly structured."
-			utils.SendResponse(w, http.StatusBadRequest, response)
+			utils.SendResponse(w, http.StatusOK, response)
 			return
 		}
 
